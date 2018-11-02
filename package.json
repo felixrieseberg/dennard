@@ -1,6 +1,6 @@
 {
   "name": "dennard",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Tiny Node cli tool to see a local app's memory footprint, cross-platform",
   "bin": {
     "dennard": "./bin/dennard.js"
