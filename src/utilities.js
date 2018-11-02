@@ -54,14 +54,14 @@ function getBottomLine(lengths = []) {
   }, TABLE_CHARS.bottomLeft)
 }
 
-function logTable({ processes, summary } = result) {
+function getLogTable({ processes, summary } = result) {
   const columns = {}
   const lengths = []
   const lines = []
   const total = Math.round(summary.total * 100) / 100
 
   if (processes.length === 0) {
-    return console.log(`No processes found.`)
+    return `No processes found.`
   }
 
   processes.forEach((p) => {
@@ -95,11 +95,10 @@ function logTable({ processes, summary } = result) {
   lines.splice(0, 0, getHeaderLine(lengths))
   lines.splice(2, 0, getDividerLine(lengths))
   lines.splice(lines.length, 0, getBottomLine(lengths))
-  lines.forEach((l) => console.log(l))
-
-  console.log(`\n Total memory footprint: ${total}MB\n`)
+  lines.push(`\n Total memory footprint: ${total}MB\n`)
+  return lines.join('\n')
 }
 
 module.exports = {
-  logTable
+  getLogTable
 }
