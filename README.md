@@ -45,5 +45,20 @@ dennard Chrome
  Total memory footprint: 1469.1MB
 ```
 
+## Memory Information
+
+On Windows, `dennard` returns the size of the "[working set][working-set]".
+The working set consists of the pages of memory that were recently referenced
+by the process.
+
+On macOS and Linux, `dennard`` gathers the sum of dirty/anonymous allocations
+in one or more processes along with their attributable kernel resources
+(KPRVT). Shared allocations only contribute to the footprint once, regardless of
+the number of times that they are mapped into any number of processes. The goal
+is for the resulting number to be as close as possible to what the macOS
+`Activity Monitor` reports as `Memory` usage.
+
 ## License
 MIT, please see `LICENSE` for details
+
+[working-set]: https://docs.microsoft.com/en-us/windows/desktop/memory/working-set
