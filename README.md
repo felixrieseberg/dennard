@@ -12,7 +12,7 @@ npm i -g dennard
 ## Usage
 
 ```sh
-dennard name-of-app
+dennard name-of-app [-w|--watch]
 ```
 
 `dennard` will wildcard-match all processes with the given name.
