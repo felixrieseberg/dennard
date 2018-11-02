@@ -60,6 +60,10 @@ function logTable({ processes, summary } = result) {
   const lines = []
   const total = Math.round(summary.total * 100) / 100
 
+  if (processes.length === 0) {
+    return console.log(`No processes found.`)
+  }
+
   processes.forEach((p) => {
     Object.keys(p).forEach((k) => {
       columns[k] = columns[k] || []

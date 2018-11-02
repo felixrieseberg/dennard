@@ -66,9 +66,7 @@ function analyzeDennardFile(file = '') {
   return { processes, summary: { total } }
 }
 
-function dennard() {
-  const name = process.argv[process.argv.length - 1]
-
+function dennard(name = '') {
   const pids = getPids(name)
 
   if (!pids || pids.length === 0) {

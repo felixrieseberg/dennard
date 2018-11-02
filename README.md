@@ -11,11 +11,17 @@ npm i -g dennard
 
 ## Usage
 
-On macOS, the tool needs to run as `sudo`. Internally, this module calls
-`footprint`, which requires `sudo` privileges.
+```sh
+dennard name-of-app
+```
+
+`dennard` will wildcard-match all processes with the given name.
+
+:warning: On macOS, the tool needs to run as `sudo`. Internally, this module
+calls `footprint`, which requires `sudo` privileges.
 
 ```sh
-sudo dennard Chrome
+dennard Chrome
 ┌──────────────────────────────┬───────────┬───────────────┐
 │ name                         │ pid       │ megabytes     │
 ├──────────────────────────────┼───────────┼───────────────┤
