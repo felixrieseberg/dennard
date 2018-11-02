@@ -51,7 +51,7 @@ On Windows, `dennard` returns the size of the "[working set][working-set]".
 The working set consists of the pages of memory that were recently referenced
 by the process.
 
-On macOS and Linux, `dennard`` gathers the sum of dirty/anonymous allocations
+On macOS and Linux, `dennard` gathers the sum of dirty/anonymous allocations
 in one or more processes along with their attributable kernel resources
 (KPRVT). Shared allocations only contribute to the footprint once, regardless of
 the number of times that they are mapped into any number of processes. The goal
