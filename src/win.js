@@ -16,13 +16,12 @@ function getProcessResult(name = '') {
 }
 
 function analyzeResult(result = '') {
-  const matchRgx = /^(\d*) (.*) {1,99}(\d*\.?\d*)$/gi
   const processes = result
     .split('\n')
     .map((k) => k.trim())
-    .slice(2)
-    .map((v) => matchRgx.exec(v))
-    .filter((k) => !!k)
+    .slice(3)
+    .map((v) => /^(\d*) (.*) {1,99}(\d*\.?\d*)$/gi.exec(v))
+    .filter((v) => !!v)
     .map((m) => ({
       pid: m[1],
       name: m[2],
