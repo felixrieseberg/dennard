@@ -1,18 +1,14 @@
-const { execSync } = require('child_process')
+const {execSync} = require('child_process')
 
 function getPsCmd(name = '') {
-  const gp = `Get-Process -Name ${name}`
+  const gp = `Get-Process -Name \"${name}\"`
   const so = `Select-Object`
   const format = `Name='WorkingSet';Expression={($_.WorkingSet/1MB)}`
   const errorAction = `-ErrorAction SilentlyContinue`
 
-  return `${gp} ${errorAction} | ${so} Id,Name,@{${format}}`
-}
-
-function getProcessResult(name = '') {
-  const cmd = getPsCmd(name)
-
-  return execSync(`powershell.exe "${cmd}"`).toString()
+  const cmd = `${gp} ${errorAction} | ${so} Id,Name,@{${format}}`
+  console.log({cmd})
+  return cmd
 }
 
 function analyzeResult(result = '') {
@@ -21,23 +17,23 @@ function analyzeResult(result = '') {
     .map((k) => k.trim())
     .slice(3)
     .map((v) => /^(\d*) (.*) {1,99}(\d*\.?\d*)$/gi.exec(v))
-    .filter((v) => !!v)
-    .map((m) => ({
-      pid: m[1],
-      name: m[2],
-      megabytes: parseInt(m[3], 10)
+    .filter((v) => v)
+    .map(([, pid, name, megabytes]) => ({
+      pid,
+      name,
+      megabytes: parseInt(megabytes, 10)
     }))
-  const total = processes.reduce((c, { megabytes }) => c + megabytes, 0)
+  const total = processes.reduce((c, {megabytes}) => (c + megabytes), 0)
 
-  return { processes, summary: { total } }
+  return {
+    processes,
+    summary: {
+      total
+    }
+  }
 }
 
-function dennard(name = '') {
-  const result = getProcessResult(name)
+const getProcessResult = (name = '') => execSync(`powershell.exe "${getPsCmd(name)}"`).toString()
+const dennard = (name = '') => analyzeResult(getProcessResult(name))
 
-  return analyzeResult(result)
-}
-
-module.exports = {
-  dennard
-}
+module.exports = dennard
