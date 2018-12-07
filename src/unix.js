@@ -1,5 +1,5 @@
-const { execSync } = require('child_process')
-const { tmpdir } = require('os')
+const {execSync} = require('child_process')
+const {tmpdir} = require('os')
 const path = require('path')
 const fs = require('fs')
 
@@ -14,8 +14,7 @@ function getPids(name = '') {
   const pids = raw
     .toString()
     .split('\n')
-    .filter((p) => p)
-    .filter((p) => parseInt(p, 10) < (process.pid - 1))
+    .filter((p) => p && parseInt(p, 10) < (process.pid - 1))
 
   return pids
 }
@@ -36,9 +35,7 @@ function getDennard(pids = []) {
   const tmpFile = getTempPath()
   const pidParam = pids.map((p) => `-p ${p}`).join(' ')
   const cmd = `sudo footprint ${pidParam} --summary --json ${tmpFile}`
-
   execSync(cmd)
-
   return tmpFile
 }
 
@@ -47,23 +44,23 @@ function analyzeDennardFile(file = '') {
   const parsed = JSON.parse(content)
   const processes = []
   const bytesPerPage = parseInt(parsed['bytes per unit'], 10)
-  const total = parseInt(parsed['total footprint'], 10) * bytesPerPage  / 1024 / 1024
+  const total = parseInt(parsed['total footprint'], 10) * bytesPerPage / 1024 / 1024
 
   for (const proc of parsed.processes) {
-    const { name, footprint, pid } = proc
+    const {name, footprint, pid} = proc
     const total = bytesPerPage * parseInt(footprint, 10)
     const megabytes = Math.round(total / 1024 / 1024 * 100) / 100
-
-    processes.push({
-      name,
-      pid,
-      megabytes
-    })
+    processes.push({name, pid, megabytes})
   }
 
   fs.unlinkSync(file)
 
-  return { processes, summary: { total } }
+  return {
+    processes,
+    summary: {
+      total
+    }
+  }
 }
 
 function dennard(name = '') {
@@ -74,12 +71,7 @@ function dennard(name = '') {
     process.exit()
   }
 
-  const file = getDennard(pids)
-  const data = analyzeDennardFile(file)
-
-  return data
+  return analyzeDennardFile(getDennard(pids))
 }
 
-module.exports = {
-  dennard
-}
+module.exports = dennard

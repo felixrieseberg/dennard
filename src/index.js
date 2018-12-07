@@ -1,50 +1,45 @@
 const readline = require('readline')
 
-const { getLogTable } = require('./utilities')
+const {getLogTable} = require('./utilities')
 
-function dennard() {
-  let dennard
+function main() {
+  const isWin = process.platform === 'win32'
+  const dennardExec = isWin
+    ? require('./win')
+    : require('./unix')
 
-  if (process.platform === 'win32') {
-    ({
-      dennard
-    } = require('./win'))
-  } else {
-    ({
-      dennard
-    } = require('./unix'))
-  }
+  process.argv.shift() // node.exe
+  process.argv.shift() // src/index.js
 
-  const nameCandidateArgs = process
-    .argv
-    .filter((v) => v !== '-w' && v !== '--watch')
-  const name = nameCandidateArgs[nameCandidateArgs.length - 1]
+  const isWatch = process.argv.some((v) => v === '-w' || v === '--watch')
+  const names = process.argv.filter((v) => v !== '-w' && v !== '--watch')
 
-  const isWatch = process.argv.find((v) => v === '-w' || v === '--watch')
+  const thunk = () => names.map(name => getLogTable(dennardExec(name))).join('\n\n')
 
   if (!isWatch) {
-    console.log(getLogTable(dennard(name)))
-  } else {
-    let lines = []
+    const logTable = thunk()
+    process.stdout.write(logTable)
+    return
+  }
 
-    const runner = () => {
-      const logTable = getLogTable(dennard(name))
+  let lines = []
 
-      // Clear
-      lines.slice(1).forEach(() => {
+  const runIt = () => {
+    const logTable = thunk()
+
+    // Clear screen
+    lines
+      .slice(1)
+      .forEach(() => {
         readline.moveCursor(process.stdout, 0, -1)
         readline.clearLine(process.stdout, 0)
       })
 
-      lines = logTable.split('\n')
-      process.stdout.write(logTable)
-    }
-
-    runner()
-    setInterval(runner, 2000)
+    lines = logTable.split('\n')
+    process.stdout.write(logTable)
   }
-}
 
-module.exports = {
-  dennard
+  setInterval(runIt, 2000)
+  runIt()
 }
+main()
